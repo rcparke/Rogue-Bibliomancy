@@ -1,0 +1,11 @@
+# Ignore Python cache
+__pycache__
+
+# Ignore Python virtual environment
+venv/
+
+# Ignore PyCharm files
+.idea
+
+# Ignore game save files
+*.sav
