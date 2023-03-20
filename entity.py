@@ -10,6 +10,8 @@ if TYPE_CHECKING:
     from components.ai import BaseAI
     from components.consumable import Consumable
     from components.equipment import Equipment
+    from components.spell import Spell
+    from components.spellbook import Spellbook
     from components.equippable import Equippable
     from components.fighter import Fighter
     from components.inventory import Inventory
@@ -135,6 +137,7 @@ class Item(Entity):
         name: str = "<Unnamed>",
         consumable: Optional[Consumable] = None,
         equippable: Optional[Equippable] = None,
+        spell: Optional[Spell] = None,
     ):
         super().__init__(
             x=x,
@@ -153,3 +156,7 @@ class Item(Entity):
         self.equippable = equippable
         if self.equippable:
             self.equippable.parent = self
+        
+        self.spell = spell
+        if self.spell:
+            self.spell.parent = self

@@ -1,9 +1,11 @@
 from components.ai import HostileEnemy
-from components import consumable, equippable
+from components import consumable, equippable, spell
 from components.equipment import Equipment
 from components.fighter import Fighter
 from components.inventory import Inventory
 from components.level import Level
+from components.spell import Spell
+from components.spellbook import Spellbook
 from entity import Actor, Item
 
 player = Actor(
@@ -80,5 +82,28 @@ leather_armor = Item(
 )
 
 chain_mail = Item(
-    char="[", color=(139, 69, 19), name="Chain Mail", equippable=equippable.ChainMail()
+    char="[",
+    color=(139, 69, 19),
+    name="Chain Mail",
+    equippable=equippable.ChainMail()
+)
+
+spellbook = Item(
+    char="+",
+    color=(220, 220, 255),
+    name="Spellbook",
+)
+
+spark_bolt = Item(
+    char="~",
+    color=(255, 0, 139),
+    name="Spark Bolt",
+    spell=spell.SparkBolt,
+)
+
+fire_bolt = Item(
+    char="~",
+    color=(255, 0, 0),
+    name="Fire Bolt",
+    spell=spell.FireBolt,
 )

@@ -24,14 +24,49 @@ max_monsters_by_floor = [
     (4, 3),
     (6, 5),
 ]
+# add seperate item tiers for various types of items
+# list of tuples of each entity in the tier, as well as a weighting within that tier
 
+t1_spell: List[Tuple[Entity, int]] = [
+    (entity_factories.spark_bolt, 100),
+]
+
+t2_spell: List[Tuple[Entity, int]] = [
+    (entity_factories.spark_bolt, 70),
+    (entity_factories.fire_bolt, 30),
+]
+
+t3_spell: List[Tuple[Entity, int]] = [
+    (entity_factories.fire_bolt, 100),
+]
+
+# figure out spellbook tiers
+
+t1_consumable: List[Tuple[Entity, int]] = [
+    (entity_factories.health_potion, 30),
+    (entity_factories.lightning_scroll, 70),
+]
+
+t2_consumable: List[Tuple[Entity, int]] = [
+    (entity_factories.health_potion, 30),
+    (entity_factories.lightning_scroll, 40),
+    (entity_factories.fireball_scroll, 30),
+]
+
+t3_consumable: List[Tuple[Entity, int]] = [
+    (entity_factories.health_potion, 30),
+    (entity_factories.fireball_scroll, 40),
+    (entity_factories.confusion_scroll, 30),
+]
+
+"""
 item_chances: Dict[int, List[Tuple[Entity, int]]] = {
-    0: [(entity_factories.health_potion, 35)],
+    0: [(entity_factories.health_potion, 35), (entity_factories.spark_bolt, 30), (entity_factories.spellbook, 30)],
     2: [(entity_factories.confusion_scroll, 10)],
     4: [(entity_factories.lightning_scroll, 25), (entity_factories.sword, 5)],
     6: [(entity_factories.fireball_scroll, 25), (entity_factories.chain_mail, 15)],
 }
-
+"""
 enemy_chances: Dict[int, List[Tuple[Entity, int]]] = {
     0: [(entity_factories.orc, 80)],
     3: [(entity_factories.troll, 15)],
@@ -56,7 +91,8 @@ def get_entities_at_random(
     weighted_chances_by_floor: Dict[int, List[Tuple[Entity, int]]],
     number_of_entities: int,
     floor: int,
-) -> List[Entity]:
+) -> List[Entity]:   
+
     entity_weighted_chances = {}
 
     for key, values in weighted_chances_by_floor.items():
@@ -77,6 +113,23 @@ def get_entities_at_random(
     )
 
     return chosen_entities
+    
+
+def get_items_at_random(
+    weighted_chances_by_floor: List[Tuple[Entity, int]],
+    number_of_entities: int,
+    floor: int,
+) -> List[Entity]:
+    # Need to adjust to utilize the new seperate tier lists
+    # instead of the single floor based Dict
+    # Maybe the tier lists should be tuples of tuples instead of lists of tuples
+
+    entities = [entity[0] for entity in weighted_chances_by_floor]
+    entity_weighted_chance_values = [chance[1] for chance in weighted_chances_by_floor]
+
+    chosen_items = random.choices(entities, weights=entity_weighted_chance_values, k=number_of_entities)
+
+    return chosen_items
 
 class RectangularRoom:
     def __init__(self, x: int, y: int, width: int, height: int):
@@ -117,10 +170,12 @@ def place_entities(room: RectangularRoom, dungeon: GameMap, floor_number: int,) 
     monsters: List[Entity] = get_entities_at_random(
         enemy_chances, number_of_monsters, floor_number
     )
-    items: List[Entity] = get_entities_at_random(
-        item_chances, number_of_items, floor_number
+    items: List[Entity] = get_items_at_random(
+        t1_spell, number_of_items, floor_number
     )
-
+    # Currently place_entities always places t1_spell items
+    # Will want to make it place t1_spellbook and t1_consumable
+    # And later different tiers when appropriate
     for entity in monsters + items:
         x = random.randint(room.x1 + 1, room.x2 - 1)
         y = random.randint(room.y1 + 1, room.y2 - 1)
