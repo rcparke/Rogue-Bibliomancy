@@ -4,5 +4,8 @@ __pycache__
 # Ignore Python virtual environment
 venv/
 
+# Ignore PyCharm files
+.idea
+
 # Ignore game save files
 *.sav
