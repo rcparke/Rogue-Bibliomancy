@@ -1,7 +1,7 @@
 # world generation, and filling up the world with entities
 
-#gamemap class, variables and methods dealing with a given level
+#worldlevel class, variables and methods dealing with a given level
 
-#gameworld class, variables and methods for the current world
+#worldmap class, variables and methods for the current world
 
 #procgen functions for generating a gamemap/level, with classes for structures (like rectangular room)
