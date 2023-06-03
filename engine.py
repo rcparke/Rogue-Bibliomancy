@@ -53,7 +53,7 @@ class Engine:
 
         self.message_log.render(console=console, x=21, y=45, width=40, height=5)
 
-        render_bar( #health bar, pulled hp values from fighter component
+        render_bar( #health bar, pulled hp current and max values from fighter component, now empty
             console=console,
             current_value=,
             maximum_value=,
