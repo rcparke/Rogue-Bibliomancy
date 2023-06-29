@@ -3,9 +3,9 @@ from __future__ import annotations
 
 import copy
 import math
-from typing import Optional, Tuple, Type, TypeVar, TYPE_CHECKING, Union
+from typing import Optional, Tuple, Type, TypeVar, List, TYPE_CHECKING, Union
 
-from engine import RenderOrder
+from engine import RenderOrder, MessageLog
 
 #if TYPE_CHECKING:
     #imported components+gamemap in past
@@ -22,7 +22,7 @@ class Entity:
 
     def __init__(
         self,
-        parent: Optional[WorldMap] = None,
+        parent: Optional[WorldLevel] = None,
         x: int = 0,
         y: int = 0,
         char: str = "?",
@@ -43,28 +43,28 @@ class Entity:
             self.parent = parent
             parent.entities.add(self)
     @property
-    def worldmap(self) -> WorldMap:
-        return self.parent.worldmap
+    def worldlevel(self) -> WorldLevel:
+        return self.parent.worldlevel
     
-    def spawn(self: T, worldmap: WorldMap, x: int, y: int) -> T:
+    def spawn(self: T, worldlevel: WorldLevel, x: int, y: int) -> T:
         #Spawn a copy of this instance at the given location
         clone = copy.deepcopy(self)
         clone.x = x
         clone.y = y
-        clone.parent = worldmap
-        worldmap.entities.add(clone)
+        clone.parent = worldlevel
+        worldlevel.entities.add(clone)
         return clone
     
-    def place(self, x: int, y: int, worldmap: Optional[WorldMap] = None) -> None:
+    def place(self, x: int, y: int, worldlevel: Optional[WorldLevel] = None) -> None:
         #Place this entity at a new location. Handles moving across WorldMaps
         self.x = x
         self.y = y
-        if worldmap:
+        if worldlevel:
             if hasattr(self, "parent"): #Possibly unitialized
-                if self.parent is self.worldmap:
+                if self.parent is self.worldlevel:
                     self.worldmap.entities.remove(self)
-            self.parent = worldmap
-            worldmap.entities.add(self)
+            self.parent = worldlevel
+            worldlevel.entities.add(self)
 
     def distance(self, x: int, y: int) -> float:
         #Return distance between the current entity and the given (x, y) coordinates
@@ -86,7 +86,10 @@ class Actor(Entity):
         color: Tuple[int, int, int],
         name: str = "<Unnamed>",
         #ai_cls: Type[BaseAI],
-
+        iteminventory: List[Item] = [],
+        itemcapacity: int = 0,
+        spellbookinventory: List[Spellbook] = [],
+        spellbookcapacity: int = 0,
         #equipment: Equipment,
         #fighter: Fighter,
         #inventory: Inventory,
@@ -98,6 +101,10 @@ class Actor(Entity):
             char=char,
             color=color,
             name=name,
+            iteminventory=iteminventory,
+            itemcapacity=itemcapacity,
+            spellbookinventory=spellbookinventory,
+            spellbookcapacity=spellbookcapacity,
             blocks_movement=True,
             render_order=RenderOrder.ACTOR,
         )
@@ -114,6 +121,10 @@ class Actor(Entity):
 
         #self.inventory = inventory
         #self.inventory.parent = self
+        def drop(self, list: List, entity: Entity) -> None: # you input which inventory list you are dropping from and the entity in that list
+            self.list.remove(entity)#hopefully it works?
+            entity.place(self.parent.x, self.parent.y, self.worldlevel)
+            self.engine.MessageLog.add_message(f"You dropped the {entity.name}.")
 
         #self.level = level
         #self.level.parent = self
@@ -156,8 +167,110 @@ class Item(Entity):
         #if self.equippable:
             #self.equippable.parent = self
 
+class Spell(Entity):
+    def __init__(
+        self,
+        *,
+        x: int = 0,
+        y: int = 0,
+        char: str = "?",
+        color: Tuple[int, int, int] = (255, 255, 255),
+        name: str = "<Unnamed>",
+        manacost: int = 0,
+        flowcost: float = 0,
+    ):
+        super().__init__(
+            x=x,
+            y=y,
+            char=char,
+            color=color,
+            name=name,
+            manacost=manacost,
+            flowcost=flowcost,
+        )
+
+class Spellbook(Entity):
+    def __init__(
+        self,
+        *,
+        x: int = 0,
+        y: int = 0,
+        char: str = "?",
+        color: Tuple[int, int, int] = (255, 255, 255),
+        name: str = "<Unnamed>",
+        manapool: int = 0,
+        flowpool: float = 0,
+        spellinventory: List[Spell] = [],
+        spellcapacity: int = 0,
+    ):
+        super().__init__(
+            x=x,
+            y=y,
+            char=char,
+            color=color,
+            name=name,
+            manapool=manapool,
+            flowpool=flowpool,
+            spellinventory=spellinventory,
+            spellcapacity=spellcapacity
+        )
+
+        def drop(self, spell: Spell) -> None:
+            #only one inventory list and only one type of entity to drop, so only needs which entity as input
+            self.spellinventory.remove(spell)
+            spell.place(self.parent.x, self.parent.y, self.worldlevel)
+            self.engine.MessageLog.add_message(f"You dropped the {spell.name}.")
+
+
+
+
 #entity factories (definition+constructors)
+player = Actor(
+    char="@",
+    color=(255, 255, 255),
+    name="Player",
+    itemcapacity=26,
+    spellbookcapacity=3,
+)
+
+gnome = Actor( #currently has no ai
+    char="g",
+    color=(63, 127, 63),
+    name="Gnome",
+    #ai_cls=HostileEnemy not implemented
+    itemcapacity=26,
+    spellbookcapacity=1,
+)
+
+healthpot = Item(
+    char="!",
+    color=[0, 255, 0],
+    name="Health Pot",
+    #how do we implement additional behavior?
+    #implement component functionality into the item class?
+)
+
+sparkbolt = Spell(
+    char = "?",
+    color=(127, 0, 127),
+    name="Spark Bolt",
+    manacost=5,
+    flowcost=.1,
+)
+
+startspellbook1 = Spellbook(
+    char = "+",
+    color=(127, 0, 0),
+    name="Spellbook",
+    manapool=70,
+    flowpool=.5,
+    spellinventory=[sparkbolt, sparkbolt],
+    spellcapacity=3,
+)
 
 #item related components like equipment/consumable that gives methods to items
 
 #ai component defining actor entity behaviors
+
+#should the item component functionality be in the item class,
+#and the ai/fighter component functionality be in the actor class?

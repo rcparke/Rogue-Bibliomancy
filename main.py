@@ -5,12 +5,13 @@ import exceptions
 import copy
 import lzma
 import pickle
+from typing import Optional
 
 import tcod
 
 from engine import Engine
-
 import input_handlers
+import color
 
 # incorporates main loop, setup_game
 
@@ -64,7 +65,7 @@ def main() -> None:
                     #Then print error to message log
                     if isinstance(handler, input_handlers.EventHandler):
                         handler.engine.message_log.add_message(
-                            traceback.format_exc(), color.error #might not have a "error" color defined and will need to update later
+                            traceback.format_exc(), color.white #might not have a "error" color defined and will need to update later
                         )
         except exceptions.QuitWithoutSaving:
             raise
@@ -100,7 +101,6 @@ def load_game(filename: str) -> Engine:
 
 class MainMenu(input_handlers.BaseEventHandler):
     #handle the main menu rendering and input
-    #should it be here or in input_handlers?
     #also I should add mouse support
 
     def on_render(self, console: tcod.Console) -> None:
@@ -113,14 +113,14 @@ class MainMenu(input_handlers.BaseEventHandler):
             console.width // 2,
             console.height // 2-4,
             "Rogue Bibliomancy",
-            fg=color.menu_title, #need to update color
+            fg=color.white, #need to update color
             alignment=tcod.CENTER,
         )
         console.print(
             console.width // 2,
             console.height - 2,
             "By Robert Parke",
-            fg=color.menu_title,
+            fg=color.white,
             alignment=tcod.CENTER,
         )
 
@@ -132,8 +132,8 @@ class MainMenu(input_handlers.BaseEventHandler):
                 console.width // 2,
                 console.height // 2-2+i,
                 text.ljust(menu_width),
-                fg=color.menu_text,
-                bg=color.black,
+                fg=color.white,
+                bg=color.black, #bg because it is assuming its over an image
                 alignment=tcod.CENTER,
                 bg_blend=tcod.BKGND_ALPHA(64),
             )

@@ -13,6 +13,7 @@ import textwrap
 from tcod.console import Console
 from tcod.map import compute_fov
 #message log originally imported entire tcod, might need adjust
+import color
 
 import exceptions
 
@@ -55,9 +56,9 @@ class Engine:
 
         render_bar( #health bar, pulled hp current and max values from fighter component, now empty
             console=console,
-            current_value=,
-            maximum_value=,
-            total_width=20
+            current_value=10,#update
+            maximum_value=20,#update
+            total_width=20,
         )
 
         render_world_level(
