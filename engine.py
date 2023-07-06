@@ -19,7 +19,7 @@ import exceptions
 
 if TYPE_CHECKING:
     from entity import Actor
-    from procgen import WorldMap, WorldLevel
+    from world_level import WorldMap, WorldLevel
 
 class Engine:
     world_map: WorldMap

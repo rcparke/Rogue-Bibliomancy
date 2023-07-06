@@ -7,7 +7,8 @@ from typing import Optional, Tuple, Type, TypeVar, List, TYPE_CHECKING, Union
 
 from engine import RenderOrder, MessageLog
 
-#if TYPE_CHECKING:
+if TYPE_CHECKING:
+    from world_level import WorldLevel
     #imported components+gamemap in past
 
 T = TypeVar("T", bound="Entity")
