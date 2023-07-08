@@ -1,10 +1,11 @@
+from __future__ import annotations
 
-from typing import Iterable, Iterator, Optional, TYPE_CHECKING, Tuple
+from typing import Iterable, Iterator, Optional, TYPE_CHECKING
 import numpy as np
 from tcod.console import Console
 
 from entity import Actor, Item
-
+import tile_types
 
 if TYPE_CHECKING:
     from engine import Engine
@@ -13,7 +14,7 @@ if TYPE_CHECKING:
 #world generation, and filling up the world with entities
 #worldlevel class, variables and methods dealing with a given level
 #worldmap class, variables and methods for the current world
-#tile_types definitions
+
 
 class WorldLevel: #functions as gamemap
     def __init__(
@@ -22,7 +23,7 @@ class WorldLevel: #functions as gamemap
         self.engine = engine
         self, width, self.height = width, height
         self.entities = set(entities)
-        self.tiles = np.full((width, height), fill_value=wall, order="F")
+        self.tiles = np.full((width, height), fill_value=tile_types.wall, order="F")
 
         self.visible = np.full(
             (width, height), fill_value=False, order="F"
@@ -31,7 +32,7 @@ class WorldLevel: #functions as gamemap
             (width, height), fill_value=False, order="F"
         ) #tiles the player has seen before
 
-        self.downstairs_location = (0,0)
+        #self.downstairs_location = (0,0)
         #Ill need to rework the stair functionality to support
         #multiple downstair and upstair, as well as different destinations
     
@@ -86,7 +87,7 @@ class WorldLevel: #functions as gamemap
         console.tiles_rgb[0 : self.width, 0 : self.height] = np.select(
             condlist=[self.visible, self.explored],
             choicelist=[self.tiles["light"], self.tiles["dark"]],
-            default=SHROUD,
+            default=tile_types.SHROUD,
         )
 
         entities_sorted_for_rendering = sorted(
@@ -129,66 +130,3 @@ class WorldMap: #functions as gameworld
 
         #from procgen import generate_dungeon
 
-
-#tile_types definitions for tiles that make up the worldlevel
-#I would add things like water or transparent walls here
-
-#Tile graphics structured type compatible with Console.tiles_rgb.
-graphic_dt = np.dtype(
-    [
-        ("ch", np.int32),  # Unicode codepoint.
-        ("fg", "3B"),  # 3 unsigned bytes, for RGB colors.
-        ("bg", "3B"),
-    ]
-)
-
-#Tile struct used for statically defined tile data.
-tile_dt = np.dtype(
-    [
-        ("walkable", bool),  # True if this tile can be walked over.
-        ("transparent", bool),  # True if this tile doesn't block FOV.
-        ("dark", graphic_dt),  # Graphics for when this tile is not in FOV.
-        ("light", graphic_dt),  # Graphics for when the tile is in FOV.
-    ]
-)
-
-
-def new_tile(
-    *,  # Enforce the use of keywords, so that parameter order doesn't matter.
-    walkable: int,
-    transparent: int,
-    dark: Tuple[int, Tuple[int, int, int], Tuple[int, int, int]],
-    light: Tuple[int, Tuple[int, int, int], Tuple[int, int, int]],
-) -> np.ndarray:
-    """Helper function for defining individual tile types """
-    return np.array((walkable, transparent, dark, light), dtype=tile_dt)
-
-# SHROUD represents unexplored, unseen tiles
-SHROUD = np.array((ord(" "), (255, 255, 255), (0, 0, 0)), dtype=graphic_dt)
-
-floor = new_tile(
-    walkable=True,
-    transparent=True,
-    dark=(ord(" "), (255, 255, 255), (50, 50, 150)),
-    light=(ord(" "), (255, 255, 255), (200, 180, 50)),
-)
-wall = new_tile(
-    walkable=False,
-    transparent=False,
-    dark=(ord(" "), (255, 255, 255), (0, 0, 100)),
-    light=(ord(" "), (255, 255, 255), (130, 110, 50)),
-)
-down_stairs = new_tile(
-    walkable=True,
-    transparent=True,
-    dark=(ord(">"), (0, 0, 100), (50, 50, 150)),
-    light=(ord(">"), (255, 255, 255), (200, 180, 50)),
-)
-up_stairs = new_tile(
-    walkable=True,
-    transparent=True,
-    dark=(ord("<"), (0, 0, 100), (50, 50, 150)),
-    light=(ord("<"), (255, 255, 255), (200, 180, 50)),
-)
-
-#the concept of side stairs, connecting two levels of the same depth, is interesting
