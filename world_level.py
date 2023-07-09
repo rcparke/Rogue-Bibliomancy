@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 #world generation, and filling up the world with entities
 #worldlevel class, variables and methods dealing with a given level
 #worldmap class, variables and methods for the current world
-#tile_types definitions
+
 
 class WorldLevel: #functions as gamemap
     def __init__(
@@ -102,6 +102,7 @@ class WorldLevel: #functions as gamemap
 
 class WorldMap: #functions as gameworld
     #holds WorldLevel settings, and generates new WorldLevels
+    #implement dungeon branch variables?
 
     def __init__(
         self,
@@ -112,7 +113,7 @@ class WorldMap: #functions as gameworld
         #max_rooms: int,
         #room_min_size: int,
         #room_max_size: int,
-        current_floor: int = 0
+        current_level: int = 0
     ):
         self.engine=engine
         self.level_width=level_width
@@ -120,14 +121,15 @@ class WorldMap: #functions as gameworld
         #max_rooms: int,
         #room_min_size: int,
         #room_max_size: int,
-        self.current_floor=current_floor
+        self.current_level=current_level
 
-    #def generate_floor(self) -> None:
-        #passes the engine.worldlevel parameters to the procgen level generation method
-        #
+    #def generate_level(self) -> None:
+        #passes the engine.world_level's worldmap parameters to the procgen level generation method
 
 
         #from procgen import generate_dungeon
+        #self.current_level += 1
+        #self.engine.world_level = generate_dungeon(
 
 
 #tile_types definitions for tiles that make up the worldlevel
