@@ -10,6 +10,8 @@ from typing import Optional
 import tcod
 
 from engine import Engine
+from world_level import WorldLevel
+import entity
 import input_handlers
 import color
 
@@ -24,70 +26,24 @@ import color
     #handle in game exceptions
     #handle game ending exceptions(?)
 
-#background_image = tcod.image.load("menu_background.png")[:,:,:3]
-#dont want to use the previously existing image, maybe just have it be blank for now?
-
-def save_game(handler: input_handlers.BaseEventHandler, filename:str) -> None:
-    #If the current event handler has an active Engine then save it
-    if isinstance(handler, input_handlers.EventHandler):
-        handler.engine.save_as(filename)
-        print("Game saved.")
-
-def main() -> None:
-    screen_width = 80
-    screen_height = 50
-    tileset = tcod.tileset.load_tilesheet(
-        "dejavu10x10_gs_tc.png", 32, 8, tcod.tileset.CHARMAP_TCOD
-    )
-
-    handler: input_handlers.BaseEventHandler = MainMenu()
-
-    with tcod.context.new_terminal(
-        screen_width,
-        screen_height,
-        tileset=tileset,
-        title="Rogue Bibliomancy",
-        vsync=True,
-    ) as context:
-        root_console = tcod.Console(screen_width, screen_height, order="F")
-        try:
-            while True:
-                root_console.clear()
-                handler.on_render(console=root_console)
-                context.present(root_console)
-
-                try:
-                    for event in tcod.event.wait():
-                        context.convert_event(event)
-                        handler = handler.handle_events(event)
-                except Exception: #In game exceptions
-                    traceback.print_exc() #print error to stderr
-                    #Then print error to message log
-                    if isinstance(handler, input_handlers.EventHandler):
-                        handler.engine.message_log.add_message(
-                            traceback.format_exc(), color.white #might not have a "error" color defined and will need to update later
-                        )
-        except exceptions.QuitWithoutSaving:
-            raise
-        except SystemExit: #Save and quit
-            save_game(handler, "savegame.sav")
-            raise
-        except BaseException: #Save on any other unexpected exception
-            save_game(handler, "savegame.sav")
-            raise
-
-if __name__ == "__main__":
-    main()
-
-
-
 #setup_game new game function, returns a new game session engine instance
 
 def new_game() -> Engine:
     # Return a brand new game session as an Engine instance
     # need to modify the engine initialization code
-    player = copy.deepcopy()
+    
+    width=80
+    height=43
+
+    player = copy.deepcopy(entity.player)
     engine = Engine(player=player)
+
+    engine.world_level = WorldLevel(
+        engine=engine,
+        width=width,
+        height=height,
+    )
+
     return engine
 #setup_game load game function
 def load_game(filename: str) -> Engine:
@@ -155,3 +111,61 @@ class MainMenu(input_handlers.BaseEventHandler):
             return input_handlers.MainGameEventHandler(new_game())
         
         return None
+
+#background_image = tcod.image.load("menu_background.png")[:,:,:3]
+#dont want to use the previously existing image, maybe just have it be blank for now?
+
+def save_game(handler: input_handlers.BaseEventHandler, filename:str) -> None:
+    #If the current event handler has an active Engine then save it
+    if isinstance(handler, input_handlers.EventHandler):
+        handler.engine.save_as(filename)
+        print("Game saved.")
+
+def main() -> None:
+    screen_width = 80
+    screen_height = 50
+    tileset = tcod.tileset.load_tilesheet(
+        "dejavu10x10_gs_tc.png", 32, 8, tcod.tileset.CHARMAP_TCOD
+    )
+
+    handler: input_handlers.BaseEventHandler = MainMenu()
+
+    #Main game loop below
+    with tcod.context.new_terminal(
+        screen_width,
+        screen_height,
+        tileset=tileset,
+        title="Rogue Bibliomancy",
+        vsync=True,
+    ) as context:
+        root_console = tcod.Console(screen_width, screen_height, order="F")
+        try:
+            while True:
+                root_console.clear()
+                handler.on_render(console=root_console)
+                context.present(root_console)
+
+                try:
+                    for event in tcod.event.wait():
+                        context.convert_event(event)
+                        handler = handler.handle_events(event)
+                except Exception: #In game exceptions
+                    traceback.print_exc() #print error to stderr
+                    #Then print error to message log
+                    if isinstance(handler, input_handlers.EventHandler):
+                        handler.engine.message_log.add_message(
+                            traceback.format_exc(), color.white #might not have a "error" color defined and will need to update later
+                        )
+        except exceptions.QuitWithoutSaving:
+            raise
+        except SystemExit: #Save and quit
+            save_game(handler, "savegame.sav")
+            raise
+        except BaseException: #Save on any other unexpected exception
+            save_game(handler, "savegame.sav")
+            raise
+
+if __name__ == "__main__":
+    main()
+
+

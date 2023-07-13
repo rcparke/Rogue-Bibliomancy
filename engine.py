@@ -17,13 +17,14 @@ import color
 
 import exceptions
 
+
 if TYPE_CHECKING:
     from entity import Actor
     from world_level import WorldMap, WorldLevel
 
 class Engine:
-    world_map: WorldMap
     world_level: WorldLevel
+    world_map: WorldMap
 
     def __init__(self, player: Actor):
         self.message_log = MessageLog()
@@ -63,7 +64,7 @@ class Engine:
 
         render_world_level(
             console=console,
-            world_level=self.world_level.current_level,
+            world_level=self.world_level.depth,
             location=(0,47),
         )
 
@@ -94,15 +95,15 @@ def render_bar( #bar that displays fill from left to right being used for hp, lo
 ) -> None:
     bar_width = int(float(current_value) / maximum_value * total_width)
 
-    console.draw_rect(x=0, y=45, width=20, height=1, ch=1, bg=color.bar_empty) #will need to update colors
+    console.draw_rect(x=0, y=45, width=20, height=1, ch=1, bg=color.white) #will need to update colors
 
     if bar_width > 0:
         console.draw_rect(
-            x=0, y=45, width=bar_width, height=1, ch=1, bg=color.bar_filled
+            x=0, y=45, width=bar_width, height=1, ch=1, bg=color.red
         )
     
     console.print(
-        x=1, y=45, string=f"HP: {current_value}/{maximum_value}", fg=color.bar_text
+        x=1, y=45, string=f"HP: {current_value}/{maximum_value}", fg=color.white
     )
 
 def render_world_level(

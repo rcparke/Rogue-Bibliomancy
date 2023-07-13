@@ -21,7 +21,7 @@ class WorldLevel: #functions as gamemap
         self, engine: Engine, width: int, height: int, entities: Iterable[Entity] = ()
     ):
         self.engine = engine
-        self, width, self.height = width, height
+        self.width, self.height = width, height
         self.entities = set(entities)
         self.tiles = np.full((width, height), fill_value=tile_types.wall, order="F")
 
@@ -114,7 +114,7 @@ class WorldMap: #functions as gameworld
         #max_rooms: int,
         #room_min_size: int,
         #room_max_size: int,
-        current_level: int = 0
+        depth: int = 0
     ):
         self.engine=engine
         self.level_width=level_width
@@ -122,13 +122,13 @@ class WorldMap: #functions as gameworld
         #max_rooms: int,
         #room_min_size: int,
         #room_max_size: int,
-        self.current_level=current_level
+        self.depth=depth
 
     #def generate_level(self) -> None:
         #passes the engine.world_level's worldmap parameters to the procgen level generation method
 
 
         #from procgen import generate_dungeon
-        #self.current_level += 1
+        #self.depth += 1
         #self.engine.world_level = generate_dungeon(
 

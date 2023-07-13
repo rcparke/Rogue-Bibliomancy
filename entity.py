@@ -102,10 +102,6 @@ class Actor(Entity):
             char=char,
             color=color,
             name=name,
-            iteminventory=iteminventory,
-            itemcapacity=itemcapacity,
-            spellbookinventory=spellbookinventory,
-            spellbookcapacity=spellbookcapacity,
             blocks_movement=True,
             render_order=RenderOrder.ACTOR,
         )
@@ -186,8 +182,8 @@ class Spell(Entity):
             char=char,
             color=color,
             name=name,
-            manacost=manacost,
-            flowcost=flowcost,
+            blocks_movement=False,
+            render_order=RenderOrder.ITEM
         )
 
 class Spellbook(Entity):
@@ -210,10 +206,8 @@ class Spellbook(Entity):
             char=char,
             color=color,
             name=name,
-            manapool=manapool,
-            flowpool=flowpool,
-            spellinventory=spellinventory,
-            spellcapacity=spellcapacity
+            blocks_movement=False,
+            render_order=RenderOrder.ITEM
         )
 
         def drop(self, spell: Spell) -> None:
@@ -230,6 +224,7 @@ player = Actor(
     char="@",
     color=(255, 255, 255),
     name="Player",
+    iteminventory=[],
     itemcapacity=26,
     spellbookcapacity=3,
 )
@@ -239,6 +234,7 @@ gnome = Actor( #currently has no ai
     color=(63, 127, 63),
     name="Gnome",
     #ai_cls=HostileEnemy not implemented
+    iteminventory=[],
     itemcapacity=26,
     spellbookcapacity=1,
 )

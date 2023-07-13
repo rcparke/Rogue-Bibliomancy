@@ -1,4 +1,5 @@
 #procgen functions for generating a gamemap/level, with classes for structures (like rectangular room)
+#world generation, and filling up the world with entities
 
 from __future__ import annotations
 
@@ -40,4 +41,3 @@ class MainBranch1:
         level.tiles[slice(0,level_width), slice(0,level_height)] = tile_types.wall #fill entire level with wall
         level.tiles[slice(1,level_width-1), slice(1,level_width-1)] = tile_types.floor #fill entire level with floor except the outer edge?
 #uses the worldlevel tiles object, not sure if I am using it correctly
-#world generation, and filling up the world with entities
