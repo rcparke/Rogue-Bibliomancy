@@ -62,14 +62,14 @@ class MovementAction(ActionWithDirection):
 
         if not self.engine.world_level.in_bounds(dest_x, dest_y):
             #Destination is out of bounds
-            raise exceptions.Impossible("That direction is blocked.")
+            raise exceptions.Impossible("That direction doesnt exist.")
         
         if not self.engine.world_level.tiles["walkable"][dest_x, dest_y]:
             #Destination is blocked by a tile
-            raise exceptions.Impossible("That direction is blocked.")
+            raise exceptions.Impossible("That direction is blocked by a tile.")
         if self.engine.world_level.get_blocking_entity_at_location(dest_x, dest_y):
             #Destination is blocked by an entity
-            raise exceptions.Impossible("That direction is blocked.")
+            raise exceptions.Impossible("That direction is blocked by an entity.")
         
         self.entity.move(self.dx, self.dy)
 
