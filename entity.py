@@ -17,9 +17,9 @@ T = TypeVar("T", bound="Entity")
 class Entity:
     #Generic object to represent players, npcs, items, spells, spellbooks
 
-    #parent: Union[WorldMap, Inventory] how are we implementing different kinds of inventories?
+    #parent: Union[WorldLevel, Inventory] how are we implementing different kinds of inventories?
     #parent is basically saying where the entity is located, is it currently on the map or in the inventory
-
+    #parent: WorldLevel
 
     def __init__(
         self,
@@ -63,7 +63,7 @@ class Entity:
         if worldlevel:
             if hasattr(self, "parent"): #Possibly unitialized
                 if self.parent is self.worldlevel:
-                    self.worldmap.entities.remove(self)
+                    self.worldlevel.entities.remove(self)
             self.parent = worldlevel
             worldlevel.entities.add(self)
 
@@ -118,18 +118,20 @@ class Actor(Entity):
 
         #self.inventory = inventory
         #self.inventory.parent = self
-        def drop(self, list: List, entity: Entity) -> None: # you input which inventory list you are dropping from and the entity in that list
-            self.list.remove(entity)#hopefully it works?
-            entity.place(self.parent.x, self.parent.y, self.worldlevel)
-            self.engine.MessageLog.add_message(f"You dropped the {entity.name}.")
+
+
+    #def drop(self, list: List, entity: Entity) -> None: # you input which inventory list you are dropping from and the entity in that list
+        #self.list.remove(entity)#hopefully it works?
+        #entity.place(self.parent.x, self.parent.y, self.worldlevel)
+        #self.engine.MessageLog.add_message(f"You dropped the {entity.name}.")
 
         #self.level = level
         #self.level.parent = self
 
-        @property
-        def is_alive(self) -> bool:
-            #Returns true while this actor can perform actions
-            return bool(self.ai)
+    @property
+    def is_alive(self) -> bool:
+        #Returns true while this actor can perform actions
+        return bool(self.ai)
         
 #item entity class (will the spell and spellbook be separate kinds of entities or special items?)
 class Item(Entity):
