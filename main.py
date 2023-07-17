@@ -10,7 +10,7 @@ from typing import Optional
 import tcod
 
 from engine import Engine
-from world_level import WorldLevel
+from world_level import WorldMap
 import entity
 import input_handlers
 import color
@@ -32,17 +32,24 @@ def new_game() -> Engine:
     # Return a brand new game session as an Engine instance
     # need to modify the engine initialization code
     
-    width=80
-    height=43
+    level_width=80
+    level_height=43
+
+    depth=0
 
     player = copy.deepcopy(entity.player)
     engine = Engine(player=player)
 
-    engine.world_level = WorldLevel(
+    engine.world_map = WorldMap(
         engine=engine,
-        width=width,
-        height=height,
+        level_width=level_width,
+        level_height=level_height,
+        depth=depth,
     )
+
+    engine.world_map.generate_level() #testing this line
+
+    engine.update_fov()
 
     return engine
 #setup_game load game function

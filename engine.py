@@ -45,7 +45,7 @@ class Engine:
         self.world_level.visible[:] = compute_fov(
             self.world_level.tiles["transparent"],
             (self.player.x, self.player.y),
-            radius=8
+            radius=8,
         )
         #if a tile is "visible" it should be added to "explored"
         self.world_level.explored |= self.world_level.visible
@@ -72,11 +72,11 @@ class Engine:
             console=console, x=21, y=44, engine=self
         )
 
-def save_as(self, filename: str) -> None:
-    #Save this Engine instance as a compressed file
-    save_data = lzma.compress(pickle.dumps(self))
-    with open(filename, "wb") as f:
-        f.write(save_data)
+    def save_as(self, filename: str) -> None:
+        #Save this Engine instance as a compressed file
+        save_data = lzma.compress(pickle.dumps(self))
+        with open(filename, "wb") as f:
+            f.write(save_data)
 
 #render functions from render functions
 

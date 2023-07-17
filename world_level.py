@@ -7,9 +7,10 @@ from tcod.console import Console
 from entity import Actor, Item
 import tile_types
 
+
 if TYPE_CHECKING:
     from engine import Engine
-    from entity import Entity
+    from entity import Entity, Actor
 
 #world generation, and filling up the world with entities
 #worldlevel class, variables and methods dealing with a given level
@@ -18,13 +19,16 @@ if TYPE_CHECKING:
 
 class WorldLevel: #functions as gamemap
     def __init__(
-        self, engine: Engine, width: int, height: int, entities: Iterable[Entity] = ()
+        self, engine: Engine, width: int, height: int, depth: int = 0, entities: Iterable[Entity] = ()
     ):
         self.engine = engine
         self.width, self.height = width, height
         self.entities = set(entities)
         self.tiles = np.full((width, height), fill_value=tile_types.wall, order="F")
 
+        self.depth=depth
+        
+        
         self.visible = np.full(
             (width, height), fill_value=False, order="F"
         ) #Tiles the player can currently see
@@ -46,7 +50,7 @@ class WorldLevel: #functions as gamemap
         yield from (
             entity
             for entity in self.entities
-            if isinstance(entity, Actor) and entity.is_alive
+            if isinstance(entity, Actor) #and entity.is_alive
         )
 
     @property
@@ -114,7 +118,9 @@ class WorldMap: #functions as gameworld
         #max_rooms: int,
         #room_min_size: int,
         #room_max_size: int,
-        depth: int = 0
+        depth: int = 0,
+        branchdepth: int = 0,
+
     ):
         self.engine=engine
         self.level_width=level_width
@@ -122,7 +128,14 @@ class WorldMap: #functions as gameworld
         #max_rooms: int,
         #room_min_size: int,
         #room_max_size: int,
+
         self.depth=depth
+        self.branchdepth=branchdepth
+    #overall branch structure implementation?
+    #
+
+
+
 
     #def generate_level(self) -> None:
         #passes the engine.world_level's worldmap parameters to the procgen level generation method
@@ -131,4 +144,20 @@ class WorldMap: #functions as gameworld
         #from procgen import generate_dungeon
         #self.depth += 1
         #self.engine.world_level = generate_dungeon(
+    
+    def generate_level(self) -> None:
+        import procgen
+
+        self.depth += 1
+
+        #Add logic here to determining which level to generate?
+
+
+        self.engine.world_level = procgen.MainBranch1.generate_level(
+            depth=self.depth,
+            branchdepth=self.branchdepth,
+            level_width=self.level_width,
+            level_height=self.level_height,
+            engine=self.engine
+        )
 
