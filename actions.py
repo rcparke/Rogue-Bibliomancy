@@ -31,6 +31,13 @@ class WaitAction(Action):
     def perform(self) -> None:
         pass
 
+class TakeStairsAction(Action):
+    def perform(self) -> None:
+        #Take stairs, if any exist at the entities location
+
+        #access the information in the stair entity, and then place the entity
+        #use the place entity method to move between WorldLevels
+        raise NotImplementedError()
 class ActionWithDirection(Action):
     def __init__(self, entity: Actor, dx: int, dy: int):
         super().__init__(entity)

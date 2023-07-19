@@ -127,6 +127,7 @@ def render_names_at_mouse_location(
 #render order class
 class RenderOrder(Enum):
     CORPSE = auto()
+    STAIR = auto()
     ITEM = auto()
     ACTOR = auto()
 

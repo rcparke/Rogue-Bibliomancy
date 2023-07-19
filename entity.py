@@ -57,7 +57,7 @@ class Entity:
         return clone
     
     def place(self, x: int, y: int, worldlevel: Optional[WorldLevel] = None) -> None:
-        #Place this entity at a new location. Handles moving across WorldMaps
+        #Place this entity at a new location. Handles moving across WorldLevels
         self.x = x
         self.y = y
         if worldlevel:
@@ -184,6 +184,8 @@ class Spell(Entity):
             char=char,
             color=color,
             name=name,
+            manacost=manacost,
+            flowcost=flowcost,
             blocks_movement=False,
             render_order=RenderOrder.ITEM
         )
@@ -208,16 +210,52 @@ class Spellbook(Entity):
             char=char,
             color=color,
             name=name,
+            manapool=manapool,
+            flowpool=flowpool,
+            spellinventory=spellinventory,
+            spellcapacity=spellcapacity,
             blocks_movement=False,
             render_order=RenderOrder.ITEM
         )
 
-        def drop(self, spell: Spell) -> None:
-            #only one inventory list and only one type of entity to drop, so only needs which entity as input
-            self.spellinventory.remove(spell)
-            spell.place(self.parent.x, self.parent.y, self.worldlevel)
-            self.engine.MessageLog.add_message(f"You dropped the {spell.name}.")
+    def drop(self, spell: Spell) -> None:
+        #only one inventory list and only one type of entity to drop, so only needs which entity as input
+        self.spellinventory.remove(spell)
+        spell.place(self.parent.x, self.parent.y, self.worldlevel)
+        self.engine.MessageLog.add_message(f"You dropped the {spell.name}.")
 
+class Stair(Entity):
+    def __init__(
+        self,
+        *,
+        x: int = 0,
+        y: int = 0,
+        char: str = "?",
+        color: Tuple[int, int, int] = (255, 255, 255),
+        name: str = "<Unnamed>",
+        dest_level: str = "Levelname?", #this maybe shouldnt be a string?
+        dest_x: int = 0,
+        dest_y: int = 0,
+
+    ):
+        super().__init__(
+            x=x,
+            y=y,
+            char=char,
+            color=color,
+            name=name,
+            dest_level=dest_level,
+            dest_x=dest_x,
+            dest_y=dest_y,
+            blocks_movement=False,
+            render_order=RenderOrder.STAIR,
+        )
+    #implement stair destination
+    #world_level destination
+    #dest_level
+    #dest_x
+    #dest_y
+    #x y destination
 
 
 
@@ -250,7 +288,7 @@ healthpot = Item(
 )
 
 sparkbolt = Spell(
-    char = "?",
+    char="?",
     color=(127, 0, 127),
     name="Spark Bolt",
     manacost=5,
@@ -258,7 +296,7 @@ sparkbolt = Spell(
 )
 
 startspellbook1 = Spellbook(
-    char = "+",
+    char="+",
     color=(127, 0, 0),
     name="Spellbook",
     manapool=70,
@@ -266,6 +304,16 @@ startspellbook1 = Spellbook(
     spellinventory=[sparkbolt, sparkbolt],
     spellcapacity=3,
 )
+
+
+#maybe I have this stair code in the world_level level gen?
+stairdown = Stair(
+    char=">",
+    color=(255,255,255),
+    name="Stair"
+)
+
+
 
 #item related components like equipment/consumable that gives methods to items
 
