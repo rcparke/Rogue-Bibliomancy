@@ -233,7 +233,7 @@ class Stair(Entity):
         char: str = "?",
         color: Tuple[int, int, int] = (255, 255, 255),
         name: str = "<Unnamed>",
-        dest_level: str = "Levelname?", #this maybe shouldnt be a string?
+        dest_level: str = "Levelname?", #this maybe shouldnt be a string? needs to reference the destination world_level
         dest_x: int = 0,
         dest_y: int = 0,
 

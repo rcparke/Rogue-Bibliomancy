@@ -37,6 +37,9 @@ class TakeStairsAction(Action):
 
         #access the information in the stair entity, and then place the entity
         #use the place entity method to move between WorldLevels
+
+        #need to save the origin worldlevel, and load/generate the destination worldlevel
+
         raise NotImplementedError()
 class ActionWithDirection(Action):
     def __init__(self, entity: Actor, dx: int, dy: int):
