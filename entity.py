@@ -184,8 +184,6 @@ class Spell(Entity):
             char=char,
             color=color,
             name=name,
-            manacost=manacost,
-            flowcost=flowcost,
             blocks_movement=False,
             render_order=RenderOrder.ITEM
         )
@@ -210,10 +208,6 @@ class Spellbook(Entity):
             char=char,
             color=color,
             name=name,
-            manapool=manapool,
-            flowpool=flowpool,
-            spellinventory=spellinventory,
-            spellcapacity=spellcapacity,
             blocks_movement=False,
             render_order=RenderOrder.ITEM
         )
@@ -244,9 +238,6 @@ class Stair(Entity):
             char=char,
             color=color,
             name=name,
-            dest_level=dest_level,
-            dest_x=dest_x,
-            dest_y=dest_y,
             blocks_movement=False,
             render_order=RenderOrder.STAIR,
         )

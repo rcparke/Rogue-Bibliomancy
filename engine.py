@@ -64,7 +64,7 @@ class Engine:
 
         render_world_level(
             console=console,
-            world_level=self.world_level.depth,
+            world_level=self.world_level.level_name,
             location=(0,47),
         )
 
@@ -112,7 +112,7 @@ def render_world_level(
     #Render the level the player is currently on, at the given location
     x, y = location
 
-    console.print(x=x, y=y, string=f"Current Level: {world_level}")
+    console.print(x=x, y=y, string=f"Level: {world_level}")
 
 def render_names_at_mouse_location(
     console: Console, x: int, y: int, engine: Engine

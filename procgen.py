@@ -37,6 +37,9 @@ class MainBranch1(Branch):
         player = engine.player
         level = WorldLevel(engine, level_width, level_height, entities=[player])
 
+        level.level_name="MainBranch-1"
+        #use f strings to have it be accurate for subsequent levels in branch
+
 
         outerwall = (slice(0,level_width), slice(0,level_height))
         innerfloor = (slice(1,level_width-1), slice(1,level_height-1))

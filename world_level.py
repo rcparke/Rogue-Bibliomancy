@@ -4,7 +4,7 @@ from typing import Iterable, Iterator, Optional, TYPE_CHECKING
 import numpy as np
 from tcod.console import Console
 
-from entity import Actor, Item
+from entity import Actor, Item, Spell, Spellbook, Stair
 import tile_types
 
 
@@ -19,14 +19,16 @@ if TYPE_CHECKING:
 
 class WorldLevel: #functions as gamemap
     def __init__(
-        self, engine: Engine, width: int, height: int, depth: int = 0, entities: Iterable[Entity] = ()
+        self, engine: Engine, width: int, height: int, entities: Iterable[Entity] = ()
     ):
         self.engine = engine
         self.width, self.height = width, height
         self.entities = set(entities)
         self.tiles = np.full((width, height), fill_value=tile_types.wall, order="F")
 
-        self.depth=depth
+
+        self.depth=int(0)
+        self.level_name=str("<Unnamed>")
         
         
         self.visible = np.full(
