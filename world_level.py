@@ -106,6 +106,12 @@ class WorldLevel: #functions as gamemap
                     x=entity.x, y=entity.y, string=entity.char, fg=entity.color
                 )
 
+    #store this world_level in world_level_instances
+    def store_world_level(self, level_name):
+        self.level_name = level_name
+        Engine.world_level_instances.append(self)
+
+
 
 class WorldMap: #functions as gameworld
     #holds WorldLevel settings, and generates new WorldLevels
@@ -155,7 +161,7 @@ class WorldMap: #functions as gameworld
         #Add logic here to determining which level to generate?
 
 
-        self.engine.world_level = procgen.MainBranch1.generate_level(
+        self.engine.world_level = procgen.Entrance.generate_level(
             depth=self.depth,
             branchdepth=self.branchdepth,
             level_width=self.level_width,
