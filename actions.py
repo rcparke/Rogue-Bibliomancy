@@ -40,6 +40,10 @@ class TakeStairsAction(Action):
 
         #need to save the origin worldlevel, and load/generate the destination worldlevel
 
+        #self.engine.world_level.level_name
+
+
+
         raise NotImplementedError()
 class ActionWithDirection(Action):
     def __init__(self, entity: Actor, dx: int, dy: int):

@@ -31,6 +31,8 @@ class Engine:
         self.mouse_location = (0,0)
         self.player = player
     
+    #the init requiring the player might become a problem when handling worldlevels without a player?
+
     def handle_npc_turns(self) -> None:
         for entity in set(self.world_level.actors) - {self.player}:
             if entity.ai:
@@ -78,6 +80,18 @@ class Engine:
         with open(filename, "wb") as f:
             f.write(save_data)
 
+
+
+    #implementing storage for other worldlevels
+    #should the store and get methods be here?
+    #is the class method usage correct?
+
+    world_level_instances = []
+    
+    def get_world_level(self, level_name):
+        return [level for level in self.world_level_instances if level.level_name == level_name]
+
+    
 #render functions from render functions
 
 def get_names_at_location(x: int, y: int, world_level: WorldLevel) -> str:
