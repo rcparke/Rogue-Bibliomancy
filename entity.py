@@ -247,7 +247,9 @@ class Stair(Entity):
     #dest_x
     #dest_y
     #x y destination
-
+        self.dest_level = dest_level
+        self.dest_x = dest_x
+        self.dest_y = dest_y
 
 
 #entity factories (definition+constructors)
@@ -301,7 +303,10 @@ startspellbook1 = Spellbook(
 stairdown = Stair(
     char=">",
     color=(255,255,255),
-    name="Stair"
+    name="Stair",
+    dest_level="Library-1",
+    dest_x=1,
+    dest_y=1,
 )
 
 

@@ -48,6 +48,7 @@ def new_game() -> Engine:
     )
 
     engine.world_map.generate_level() #testing this line
+    player.place(1,1,engine.world_level)
 
     engine.update_fov()
 

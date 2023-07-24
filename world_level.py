@@ -59,7 +59,22 @@ class WorldLevel: #functions as gamemap
     def nonactors(self) -> Iterator[Entity]:
         #presumably this also does not grab corpses, do I even want corpses?
         #hopefully this is more useful than the items iterator method since I added nonitem nonactor types (spells+spellbooks)
-        yield from (entity for entity in self.entities if not isinstance(entity, Actor))
+        yield from (
+            entity
+            for entity in self.entities
+            if not isinstance(entity, Actor)
+        )
+
+    @property
+    def stairs(self) -> Iterator[Stair]:
+        #Iterate over this levels stairs
+        yield from (
+            entity
+            for entity in self.entities
+            if isinstance(entity, Stair)
+        )
+
+
 
     def get_blocking_entity_at_location(
         self, location_x: int, location_y: int,
@@ -79,6 +94,12 @@ class WorldLevel: #functions as gamemap
                 return actor
         return None
     
+    def get_stair_at_location(self, x: int, y: int) -> Optional[Stair]:
+        for stair in self.stairs:
+            if stair.x == x and stair.y == y:
+                return stair
+        return None
+
     def in_bounds(self, x: int, y: int) -> bool:
         #Return True if x and y are inside of the bounds of this level
         return 0 <= x < self.width and 0 <= y < self.height
@@ -153,19 +174,35 @@ class WorldMap: #functions as gameworld
         #self.depth += 1
         #self.engine.world_level = generate_dungeon(
     
-    def generate_level(self) -> None:
+    def generate_level(self, branch, branchdepth: int) -> None:
         import procgen
 
-        self.depth += 1
 
-        #Add logic here to determining which level to generate?
+        self.branch = branch
+        self.branchdepth = branchdepth
 
+        #have this method accept the destination branch and level
+        #apparently using reflection in this way is a bad idea
+        #so, use a dict mapping instead of reflection?
 
-        self.engine.world_level = procgen.Entrance.generate_level(
+        branches = {
+            'Library': procgen.Library.generate_level,
+            'Entrance': procgen.Entrance.generate_level,
+        }
+        
+        self.engine.world_level = branches[branch](
             depth=self.depth,
             branchdepth=self.branchdepth,
             level_width=self.level_width,
             level_height=self.level_height,
             engine=self.engine
-        )
+            )
+
+        #self.engine.world_level = procgen.branch.generate_level(
+        #    depth=self.depth,
+        #    branchdepth=self.branchdepth,
+        #    level_width=self.level_width,
+        #    level_height=self.level_height,
+        #    engine=self.engine
+        #)
 

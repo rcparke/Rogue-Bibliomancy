@@ -88,7 +88,7 @@ class Engine:
 
     world_level_instances = []
     
-    def get_world_level(self, level_name):
+    def get_world_level(self, level_name) -> WorldLevel:
         return [level for level in self.world_level_instances if level.level_name == level_name]
 
     
