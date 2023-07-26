@@ -45,9 +45,11 @@ def new_game() -> Engine:
         level_width=level_width,
         level_height=level_height,
         depth=depth,
+
+        world_level_instances=[],
     )
 
-    engine.world_map.generate_level() #testing this line
+    engine.world_map.generate_level("Entrance", 1) #testing this line
     player.place(1,1,engine.world_level)
 
     engine.update_fov()

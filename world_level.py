@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Iterable, Iterator, Optional, TYPE_CHECKING
+from typing import Iterable, Iterator, Optional, List, TYPE_CHECKING
 import numpy as np
 from tcod.console import Console
 
@@ -144,39 +144,24 @@ class WorldMap: #functions as gameworld
         engine: Engine,
         level_width: int,
         level_height: int,
-        #max_rooms: int,
-        #room_min_size: int,
-        #room_max_size: int,
         depth: int = 0,
         branchdepth: int = 0,
-
+        world_level_instances: List[WorldLevel]
     ):
         self.engine=engine
         self.level_width=level_width
         self.level_height=level_height
-        #max_rooms: int,
-        #room_min_size: int,
-        #room_max_size: int,
 
         self.depth=depth
         self.branchdepth=branchdepth
-    #overall branch structure implementation?
-    #
-
-
-
-
-    #def generate_level(self) -> None:
-        #passes the engine.world_level's worldmap parameters to the procgen level generation method
-
-
-        #from procgen import generate_dungeon
-        #self.depth += 1
-        #self.engine.world_level = generate_dungeon(
+        self.world_level_instances=world_level_instances
     
-    def generate_level(self, branch, branchdepth: int) -> None:
-        import procgen
+    def get_world_level(self, level_name) -> WorldLevel:
+        return [level for level in self.world_level_instances if level.level_name == level_name]
 
+    def generate_level(self, branch: str, branchdepth: int) -> None:
+        import procgen
+        #import engine
 
         self.branch = branch
         self.branchdepth = branchdepth
@@ -189,20 +174,19 @@ class WorldMap: #functions as gameworld
             'Library': procgen.Library.generate_level,
             'Entrance': procgen.Entrance.generate_level,
         }
-        
-        self.engine.world_level = branches[branch](
-            depth=self.depth,
-            branchdepth=self.branchdepth,
-            level_width=self.level_width,
-            level_height=self.level_height,
-            engine=self.engine
-            )
+        #maybe move the branches dict to somewhere else that makes more sense?
 
-        #self.engine.world_level = procgen.branch.generate_level(
-        #    depth=self.depth,
-        #    branchdepth=self.branchdepth,
-        #    level_width=self.level_width,
-        #    level_height=self.level_height,
-        #    engine=self.engine
-        #)
+        level_name=f"{branch}-{branchdepth}"
+
+        if WorldMap.get_world_level(self, level_name): #test if a world_level with the correct branch+branchdepth already exists
+            #if a world_level already exists, just return
+            return
+        else:
+            self.engine.world_level = branches[branch](
+                depth=self.depth,
+                branchdepth=self.branchdepth,
+                level_width=self.level_width,
+                level_height=self.level_height,
+                engine=self.engine
+                )
 

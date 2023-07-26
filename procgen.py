@@ -37,7 +37,7 @@ class Entrance(Branch):
         player = engine.player
         level = WorldLevel(engine, level_width, level_height, entities=[player])
 
-        level.level_name="Entrance-1"
+        level.level_name=f"Entrance-{branchdepth}"
         #use f strings to have it be accurate for subsequent levels in branch
 
 
@@ -55,28 +55,42 @@ class Entrance(Branch):
     
 class Library(Branch):
 
-    def generate_level(
-        depth: int,
-        branchdepth: int,
+    def __init__(
+        self,
+        currentbranchdepth: int = 1, #start at 1 for user readability
+    ):
+        self.currentbranchdepth = currentbranchdepth
 
+    def generate_level(
+        self,
+        depth: int,
+        branchdepth: int, #if 0, ignore and increment currentbranchdepth
+        #if not 0, check if the level already exists?
+        #if not 0 and does not exist, generate it
         level_width: int,
         level_height: int,
         engine: Engine,
     ) -> WorldLevel:
 
+        #I need to double check if I am correctly using instance variables vs class variables
+
         player = engine.player
         level = WorldLevel(engine, level_width, level_height, entities=[player])
 
-        level.level_name="Library-1"
+        
+        
+
+
+        level.level_name=f"Library-{Library.currentbranchdepth}"
         #use f strings to have it be accurate for subsequent levels in branch
 
 
-        outerwall = (slice(0,level_width), slice(0,level_height))
+        #outerwall = (slice(0,level_width), slice(0,level_height))
         innerfloor = (slice(1,level_width-1), slice(1,level_height-1))
 
-        level.tiles[outerwall] = tile_types.wall #fill entire level with wall
+        #level.tiles[outerwall] = tile_types.wall #fill entire level with wall
         level.tiles[innerfloor] = tile_types.floor #fill entire level with floor except the outer edge?
         
-        player.place(1,1,level)
+        #player.place(1,1,level)
 
         return level
