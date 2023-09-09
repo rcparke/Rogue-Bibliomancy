@@ -136,6 +136,9 @@ class MainGameEventHandler(EventHandler):
 
         player = self.engine.player
 
+        if key == tcod.event.KeySym.PERIOD and modifier & tcod.event.Modifier.SHIFT:
+            return actions.TakeStairsAction(player)
+
         if key in MOVE_KEYS:
             dx, dy = MOVE_KEYS[key]
             action = BumpAction(player, dx, dy)
@@ -144,6 +147,7 @@ class MainGameEventHandler(EventHandler):
 
         elif key == tcod.event.KeySym.ESCAPE:
             raise SystemExit()
+        
         
 
         #No valid key was pressed

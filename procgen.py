@@ -10,6 +10,7 @@ import tcod
 
 from world_level import WorldLevel
 import tile_types
+import entity
 
 if TYPE_CHECKING:
     from engine import Engine
@@ -17,18 +18,17 @@ if TYPE_CHECKING:
 
 #using a similar object structure to event handlers in input_handlers.py
 class Branch:
-    def __init__(self, depth: int, branchdepth: int):
-        self.depth = depth
+    def __init__(self, branchdepth: int):
         self.branchdepth = branchdepth
-        #depth is the number of levels from the surface, branchdepth is the number of levels from the start of the branch
-        #depth is potentially used for determining entity's (deeper=harder), branchdepth is used for different features at certain branch levels
+
+        #I could move duplicate branch code to here
+
 
 class Entrance(Branch):
 
     def generate_level(
-        depth: int,
+        self,
         branchdepth: int,
-
         level_width: int,
         level_height: int,
         engine: Engine,
@@ -36,8 +36,9 @@ class Entrance(Branch):
 
         player = engine.player
         level = WorldLevel(engine, level_width, level_height, entities=[player])
+        branch = "Entrance"
 
-        level.level_name=f"Entrance-{branchdepth}"
+        level.level_name=f"{branch}-{branchdepth}"
         #use f strings to have it be accurate for subsequent levels in branch
 
 
@@ -50,20 +51,21 @@ class Entrance(Branch):
         #level.tiles[(42,42)] = tile_types.wall 42 is visible, 43 is a black empty border
         
         #player.place(1,1,level)
+        stairdown = entity.stairdown
+        
+        stairdown.dest_branch = "Library"
+        stairdown.dest_branchdepth = 1
+        stairdown.dest_x = 1
+        stairdown.dest_y = 1
+
+        stairdown.place(1, 1, level)
 
         return level
     
 class Library(Branch):
 
-    def __init__(
-        self,
-        currentbranchdepth: int = 1, #start at 1 for user readability
-    ):
-        self.currentbranchdepth = currentbranchdepth
-
     def generate_level(
         self,
-        depth: int,
         branchdepth: int, #if 0, ignore and increment currentbranchdepth
         #if not 0, check if the level already exists?
         #if not 0 and does not exist, generate it
@@ -76,12 +78,10 @@ class Library(Branch):
 
         player = engine.player
         level = WorldLevel(engine, level_width, level_height, entities=[player])
-
         
-        
+        branch = "Library"
 
-
-        level.level_name=f"Library-{Library.currentbranchdepth}"
+        level.level_name=f"{branch}-{branchdepth}"
         #use f strings to have it be accurate for subsequent levels in branch
 
 

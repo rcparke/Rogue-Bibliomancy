@@ -44,7 +44,6 @@ def new_game() -> Engine:
         engine=engine,
         level_width=level_width,
         level_height=level_height,
-        depth=depth,
 
         world_level_instances=[],
     )

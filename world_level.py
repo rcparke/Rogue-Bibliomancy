@@ -26,9 +26,8 @@ class WorldLevel: #functions as gamemap
         self.entities = set(entities)
         self.tiles = np.full((width, height), fill_value=tile_types.wall, order="F")
 
-
-        self.depth=int(0)
-        self.level_name=str("<Unnamed>")
+        self.branchdepth=int(0)
+        self.branch=str("<Unnamed>")
         
         
         self.visible = np.full(
@@ -128,9 +127,10 @@ class WorldLevel: #functions as gamemap
                 )
 
     #store this world_level in world_level_instances
+    #need to rework this so it works, and doesnt use level_name
     def store_world_level(self, level_name):
         self.level_name = level_name
-        Engine.world_level_instances.append(self)
+        WorldMap.world_level_instances.append(self)
 
 
 
@@ -144,7 +144,7 @@ class WorldMap: #functions as gameworld
         engine: Engine,
         level_width: int,
         level_height: int,
-        depth: int = 0,
+        branch: str = "<Unknown>",
         branchdepth: int = 0,
         world_level_instances: List[WorldLevel]
     ):
@@ -152,12 +152,13 @@ class WorldMap: #functions as gameworld
         self.level_width=level_width
         self.level_height=level_height
 
-        self.depth=depth
+        self.branch = branch
         self.branchdepth=branchdepth
         self.world_level_instances=world_level_instances
     
-    def get_world_level(self, level_name) -> WorldLevel:
-        return [level for level in self.world_level_instances if level.level_name == level_name]
+    def get_world_level(self, branch, branchdepth) -> WorldLevel:
+        if [level for level in self.world_level_instances if level.branch == branch and level.branchdepth == branchdepth]:
+            return WorldLevel
 
     def generate_level(self, branch: str, branchdepth: int) -> None:
         import procgen
@@ -178,12 +179,12 @@ class WorldMap: #functions as gameworld
 
         level_name=f"{branch}-{branchdepth}"
 
-        if WorldMap.get_world_level(self, level_name): #test if a world_level with the correct branch+branchdepth already exists
+        if WorldMap.get_world_level(self, branch, branchdepth): #test if a world_level with the correct branch+branchdepth already exists
             #if a world_level already exists, just return
             return
         else:
             self.engine.world_level = branches[branch](
-                depth=self.depth,
+                self,
                 branchdepth=self.branchdepth,
                 level_width=self.level_width,
                 level_height=self.level_height,

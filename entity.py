@@ -131,7 +131,8 @@ class Actor(Entity):
     @property
     def is_alive(self) -> bool:
         #Returns true while this actor can perform actions
-        return bool(self.ai)
+        #return bool(self.ai)
+        return True
         
 #item entity class (will the spell and spellbook be separate kinds of entities or special items?)
 class Item(Entity):
@@ -227,7 +228,8 @@ class Stair(Entity):
         char: str = "?",
         color: Tuple[int, int, int] = (255, 255, 255),
         name: str = "<Unnamed>",
-        dest_level: str = "Levelname?", #this maybe shouldnt be a string? needs to reference the destination world_level
+        dest_branch: str = "Levelname?", #this maybe shouldnt be a string? needs to reference the destination world_level
+        dest_branchdepth: int = 1, #branchdepth starts at one for player readability
         dest_x: int = 0,
         dest_y: int = 0,
 
@@ -247,10 +249,11 @@ class Stair(Entity):
     #dest_x
     #dest_y
     #x y destination
-        self.dest_level = dest_level
+        self.dest_branch = dest_branch
+        self.dest_branchdepth = dest_branchdepth
         self.dest_x = dest_x
         self.dest_y = dest_y
-
+        self.dest_level_name = f"{dest_branch}-{dest_branchdepth}"
 
 #entity factories (definition+constructors)
 player = Actor(
@@ -304,7 +307,8 @@ stairdown = Stair(
     char=">",
     color=(255,255,255),
     name="Stair",
-    dest_level="Library-1",
+    dest_branch="Entrance",
+    dest_branchdepth=1,
     dest_x=1,
     dest_y=1,
 )
