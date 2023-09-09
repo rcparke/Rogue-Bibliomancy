@@ -86,10 +86,7 @@ class Engine:
     #should the store and get methods be here?
     #is the class method usage correct?
 
-    world_level_instances = []
     
-    def get_world_level(self, level_name) -> WorldLevel:
-        return [level for level in self.world_level_instances if level.level_name == level_name]
 
     
 #render functions from render functions
