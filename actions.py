@@ -85,6 +85,15 @@ class ActionWithDirection(Action):
         raise NotImplementedError()
     
 
+class MeleeAction(ActionWithDirection):
+    def perform(self) -> None:
+        target = self.target_actor
+        if not target:
+            raise exceptions.Impossible("Nothing to attack.")
+            #Could implement attacking empty space for attempting to attack invisible entities
+        raise NotImplementedError()
+        #reduce the targets health, and print a message to the message log
+
 class MovementAction(ActionWithDirection):
     def perform(self) -> None:
         dest_x, dest_y = self.dest_xy
